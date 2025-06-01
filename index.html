@@ -1,135 +1,113 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey App</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #survey-form { margin-top: 20px; }
-        #survey-table { margin-top: 20px; }
-        #video-container { width: 100%; height: 200px; border: 1px solid black; }
-        #canvas-container { width: 100%; height: 200px; border: 1px solid black; display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Survey App</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Survey App</h1>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#loginModal">Login</button>
+  <h2>Survey App</h2>
 
-        <!-- Login Modal -->
-        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Login</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="login-form">
-                            <div class="form-group">
-                                <label>Username:</label>
-                                <input type="text" class="form-control" id="username">
-                            </div>
-                            <div class="form-group">
-                                <label>Password:</label>
-                                <input type="password" class="form-control" id="password">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <label for="owner">Shop Owner:</label>
+  <select id="owner">
+    <option value="Amit">Amit</option>
+    <option value="Sumit">Sumit</option>
+    <option value="Ajit">Ajit</option>
+    <option value="Sujit">Sujit</option>
+  </select>
 
-        <!-- Survey Modal -->
-        <div class="modal fade" id="surveyModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Survey</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="survey-form">
-                            <div class="form-group">
-                                <label>Shop Owner Name:</label>
-                                <input type="text" class="form-control" id="shop-owner-name">
-                            </div>
-                            <div class="form-group">
-                                <label>Owner Mobile Number:</label>
-                                <input type="text" class="form-control" id="owner-mobile-number">
-                            </div>
-                            <div class="form-group">
-                                <label>Shop Type:</label>
-                                <input type="text" class="form-control" id="shop-type">
-                            </div>
-                            <div class="form-group">
-                                <div id="video-container">
-                                    <video id="video" width="100%" height="100%" autoplay></video>
-                                </div>
-                                <div id="canvas-container">
-                                    <canvas id="canvas" width="100%" height="100%"></canvas>
-                                </div>
-                                <button type="button" class="btn btn-primary" id="start-camera">Start Camera</button>
-                                <button type="button" class="btn btn-primary" id="take-photo" style="display:none;">Take Photo</button>
-                                <button type="button" class="btn btn-primary" id="get-location">Get Location</button>
-                            </div>
-                            <button type="submit" class="btn btn-success">Submit Survey</button>
-                        </form>
-                        <p id="location"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <br><br>
 
-        <!-- Admin Modal -->
-        <div class="modal fade" id="adminModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Admin Panel</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="create-credentials-form">
-                            <div class="form-group">
-                                <label>New Username:</label>
-                                <input type="text" class="form-control" id="new-username">
-                            </div>
-                            <div class="form-group">
-                                <label>New Password:</label>
-                                <input type="password" class="form-control" id="new-password">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create</button>
-                        </form>
-                        <h5>Existing Users:</h5>
-                        <ul id="existing-credentials"></ul>
-                        <button class="btn btn-success mt-2" id="export-to-excel">Export Data</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <label for="cameraSelect">Select Camera:</label>
+  <select id="cameraSelect"></select>
+  <button id="startCamera">Start Camera</button>
+  <br><br>
 
-        <table class="table table-bordered" id="survey-table">
-            <thead>
-                <tr>
-                    <th>Shop Owner</th>
-                    <th>Mobile Number</th>
-                    <th>Shop Type</th>
-                    <th>Photo Link</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
-            <tbody id="survey-table-body"></tbody>
-        </table>
-    </div>
+  <video id="video" width="320" height="240" autoplay></video>
+  <br><br>
+  <button id="capture">Capture Photo</button>
+  <br><br>
+  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
-    <script src="app.js"></script>
+  <br><br>
+  <button id="getLocation">Get Location</button>
+  <p id="location"></p>
+
+  <br><br>
+  <button id="exportExcel">Export to Excel</button>
+
+  <script>
+    let stream;
+    let capturedImageURL = '';
+    let surveyData = [];
+
+    // Camera list
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      const select = document.getElementById('cameraSelect');
+      devices.forEach(device => {
+        if (device.kind === 'videoinput') {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.text = device.label || `Camera ${select.length + 1}`;
+          select.appendChild(option);
+        }
+      });
+    });
+
+    // Start camera
+    document.getElementById('startCamera').addEventListener('click', () => {
+      const deviceId = document.getElementById('cameraSelect').value;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }).then(s => {
+        stream = s;
+        document.getElementById('video').srcObject = stream;
+      });
+    });
+
+    // Capture photo
+    document.getElementById('capture').addEventListener('click', () => {
+      const canvas = document.getElementById('canvas');
+      const video = document.getElementById('video');
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => {
+        capturedImageURL = URL.createObjectURL(blob);
+        alert('Photo captured!');
+      }, 'image/jpeg');
+    });
+
+    // Get location
+    document.getElementById('getLocation').addEventListener('click', () => {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        document.getElementById('location').innerText = `Lat: ${lat}, Lon: ${lon}`;
+      });
+    });
+
+    // Export to Excel
+    document.getElementById('exportExcel').addEventListener('click', () => {
+      const owner = document.getElementById('owner').value;
+      const locationText = document.getElementById('location').innerText;
+      const photoLink = capturedImageURL ? `=HYPERLINK("${capturedImageURL}", "Download Photo")` : '';
+
+      surveyData.push({
+        Owner: owner,
+        Location: locationText,
+        Photo: photoLink
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(surveyData, { origin: 'A1' });
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'SurveyData');
+
+      const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'SurveyReport.xlsx');
+    });
+  </script>
 </body>
 </html>
